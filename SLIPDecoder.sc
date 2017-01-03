@@ -11,7 +11,7 @@ SLIPDecoder {
 		rate = b;
 		numAddresses = c;
 		port = SerialPort(deviceName, rate);
-		actions = {}!numAddresses; //second byte in the data array is its address if it's properly configured in OSC. This value is used to select between a number of actions which can be externally set. Each action is a function that takes the message contents as an argument. see 'decode' below. 
+		actions = {}!numAddresses; //second byte in the data array is its address if it's properly configured in OSC. THIS MIGHT BE DIFFERENT FOR DIFFERENT VERSIONS OF THE OSC PROTOCOL. This value is used to select between a number of actions which can be externally set. Each action is a function that takes the message contents as an argument. see 'decode' below. 
 		decode = {|data| //function for decoding the properly-SLIP-decoded message. 
 			var temp = 0!15, address, output;
 			//data[1].asAscii.postln;
@@ -32,6 +32,7 @@ SLIPDecoder {
 			// esc = 8r333 (2r11011011 or 0xdb or 219)
 			// esc_end = 8r334 (2r011011100 or 0xdc or 220)
 			// esc_esc = 8r335 (2r011011101 or 0xdd or 221)
+			// original code by Martin Marier & Fredrik Olofsson
 
 			var buffer, serialByte;
 			var maxPacketSize = 64; // 16 is enouch for 8 10 bit values.
