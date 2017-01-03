@@ -15,9 +15,13 @@ Currently does not support OSC bundles (each control source must send a separate
 
 Example code:
 
-//args = [port or path, baudrate, number of addresses/knobs/whatever]
+//args = [port or path, baudrate, number of addresses/knobs/whatever] 
+
 k = SLIPDecoder.new("/dev/your_USB_device", 9600, 3);
+
 k.start;
+
 k.actions[0] = {|input| input.postln;};
+
 k.actions[1] = {|input| input.postln;}; //define functions to do something with the incoming data. 
 
