@@ -5,6 +5,7 @@ The SLIPDecoder object takes 3 arguments = a port or address, baudrate and the n
 SLIPDecoder.actions is an array of functions that receive the corresponding input as an argument and are evaluated every time a new value is read. The size of the array is set by the numAddresses argument when creating a new SLIPDecoder. 
 
 note: currently, only sequentially-numbered addresses ("/0", "/1", "/2") will work; it should be simple to modify the classfile to accept different addresses. 
+note: There have since been updates to the OSC protocol and some changes might be needed if you have devices using a new protocol - in particular, I think newer OSC messages have an additional byte somewhere.
 
 Configuring your arduino or other microcontroller: 
 I have included a sample file that should work on an Arduino Uno. I have also confirmed that it works on an Adafruit Metro Mini 328. I am using the following libraries: OSCBoards.h OSCBundle.h OSCData.h OSCMessage.h OSCTiming.h SLIPEncodedSerial.h SLIPEncodedUSBSerial.h 
