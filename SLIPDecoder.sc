@@ -184,7 +184,12 @@ SLIPDecoder {
           //3.wait;
           if (buffer.isEmpty.not, {
             this.traceMsg("decode!", buffer);
-            this.decode(buffer);
+            try {
+              this.decode(buffer);
+            } { |error|
+              "Decode failed".postln;
+              error.postln;
+            };
             buffer = Int8Array(maxSize: bufferSize);
           });
         },
