@@ -33,8 +33,9 @@ SLIPDecoder {
     ^((byteArr[0] << 24) + (byteArr[1] << 16) + (byteArr[2] << 8) + byteArr[3]);
   }
 
+  // @TODO this is wrong!
   readFloat32 { |byteArr|
-    ^Float.from32Bits(this.readInt32(byteArr));
+    ^Float.from32Bits((byteArr[0] << 24) + (byteArr[1] << 16) + (byteArr[2] << 8) + byteArr[3]);
   }
 
   // Read byte array 4 bytes at a time, return on null termination or if end of buffer reached
@@ -213,6 +214,7 @@ SLIPDecoder {
     this.traceMsg("Stopping...");
     running = false;
     port.close;
+    port.free;
     this.reader.free;
   }
 }
