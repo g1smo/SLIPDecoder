@@ -78,6 +78,11 @@ SLIPDecoder {
 
   // Function for decoding the properly-SLIP-decoded message.
   decode { |data|
+    ^NetAddr.localAddr.sendRaw(data);
+  }
+
+  // Skip this, it reads floating points wrong!
+  decodeD { |data|
     var header = data.at((0..7));
 
     // Is it a bundle? (read header from first 8 bytes)
@@ -109,35 +114,47 @@ SLIPDecoder {
       });
     }, {
       // OSC message
-      var nextString, index, address, type, args = [];
+      var nextString, address, type, args = [];
 
       // Message Address
       nextString = this.readNextString(data);
       address = nextString[0];
+      //address.postln;
       data = data[(nextString[1]..(data.size - 1))];
 
       nextString = this.readNextString(data);
+      //nextString.postln;
       type = nextString[0];
+      type = type.at((1..(type.size - 1)));
       data = data[(nextString[1]..(data.size - 1))];
+      //data.postln;
 
-      type.do({ |t|
-        t.switch (
+      // Skip , at the start of the type string
+      args = type.collect({ |t, i|
+        var start, end;
+        start = (i * 4);
+        end = start + 3;
+
+        //data[(start..end)].postln;
+        t.switch(
           $i, {
-            args = args.add(this.readInt32(data));
-            data = data[(4..(data.size - 1))];
+            //"got int".postln;
+            this.readInt32(data[(start..end)]);
           },
           $f, {
-            args = args.add(this.readFloat32(data));
-            data = data[(4..(data.size - 1))];
-          },
+            //"got float".postln;
+            this.readFloat32(data[(start..end)]);
+          }/*,
           $s, {
-            nextString = this.readNextString(data);
-            args = args.add(nextString[0]);
             data = data[(nextString[1]..(data.size - 1))];
+            nextString = ^this.readNextString(data);
           }
-          /* @TODO implement strings, bytearrays */
+          */
+          /* @TODO implement strings, bytearrays, other SC OSC types */
         );
       });
+      args.postln;
+      (prepend ++ address).postln;
       this.traceMsg("OSC", prepend ++ address, args);
 
       // Send OSC message to the engine
@@ -213,7 +230,7 @@ SLIPDecoder {
   stop {
     this.traceMsg("Stopping...");
     running = false;
-    port.close;
+    if (port != nil, { port.close; });
     port.free;
     this.reader.free;
   }
